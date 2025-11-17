@@ -1,0 +1,2655 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur BTS SP3S U3 Gestion - PascalTamin Coaching</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fff5f0 0%, #ffe8dc 100%);
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 87, 34, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #ff5722 0%, #ff7043 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .branding {
+            position: absolute;
+            top: 15px;
+            right: 30px;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .branding::before {
+            content: "🎓";
+            margin-right: 5px;
+        }
+        
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .mode-selector {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 3px solid #ff7043;
+        }
+        
+        .mode-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .mode-btn {
+            padding: 12px 25px;
+            border: 2px solid #ff5722;
+            background: white;
+            color: #ff5722;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .mode-btn:hover {
+            background: #ff5722;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .mode-btn.active {
+            background: #ff5722;
+            color: white;
+        }
+        
+        .dashboard {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            padding: 20px 30px;
+            border-bottom: 2px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ff5722;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .timer {
+            background: #2196f3;
+            color: white;
+        }
+        
+        .timer .stat-value {
+            color: white;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .question-interactive {
+            background: white;
+            border-left: 5px solid #ff7043;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .question-number {
+            background: #ff5722;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .question-points {
+            background: #4caf50;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+        
+        .question-title {
+            color: #ff5722;
+            font-size: 1.3em;
+            margin: 15px 0;
+        }
+        
+        .consigne {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .consigne-title {
+            color: #1976d2;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .consigne-title::before {
+            content: "📋";
+            margin-right: 10px;
+        }
+        
+        .answer-zone {
+            margin: 20px 0;
+        }
+        
+        .answer-label {
+            font-weight: bold;
+            color: #ff5722;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .answer-input {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1em;
+            resize: vertical;
+            transition: border 0.3s;
+        }
+        
+        .answer-input:focus {
+            outline: none;
+            border-color: #ff5722;
+            box-shadow: 0 0 10px rgba(255, 87, 34, 0.2);
+        }
+        
+        .answer-input.has-content {
+            background: #f1f8f4;
+            border-color: #4caf50;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+            color: white;
+        }
+        
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #388e3c 0%, #4caf50 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .btn-correction {
+            background: linear-gradient(135deg, #2196f3 0%, #42a5f5 100%);
+            color: white;
+        }
+        
+        .btn-correction:hover {
+            background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+            transform: translateY(-2px);
+        }
+        
+        .btn-correction:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .correction-panel {
+            background: #e8f5e9;
+            border: 3px solid #4caf50;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .correction-panel.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .correction-title {
+            color: #2e7d32;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .correction-title::before {
+            content: "✅";
+            margin-right: 10px;
+            font-size: 1.3em;
+        }
+        
+        .notation-grid {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .critere {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .critere:last-child {
+            border-bottom: none;
+        }
+        
+        .critere-score {
+            background: #ff5722;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .score-total {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        
+        .aide {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .aide-title {
+            color: #ff5722;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.15em;
+        }
+        
+        .aide-title::before {
+            content: "💡";
+            margin-right: 10px;
+            font-size: 1.4em;
+        }
+        
+        .exemple-solution {
+            background: #f3e5f5;
+            border-left: 4px solid #9c27b0;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .exemple-title {
+            color: #6a1b9a;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .exemple-title::before {
+            content: "📚";
+            margin-right: 10px;
+        }
+        
+        .formule {
+            background: #f5f5f5;
+            border: 2px dashed #ff5722;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        th {
+            background: #ff5722;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:hover {
+            background: #fff3e0;
+        }
+        
+        .dossier {
+            margin-bottom: 30px;
+            border: 3px solid #ff7043;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .dossier-header {
+            background: linear-gradient(135deg, #ff5722 0%, #ff7043 100%);
+            color: white;
+            padding: 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dossier-header:hover {
+            background: linear-gradient(135deg, #f4511e 0%, #ff5722 100%);
+        }
+        
+        .dossier-content {
+            padding: 30px;
+            display: none;
+            background: #fafafa;
+        }
+        
+        .dossier-content.active {
+            display: block;
+        }
+        
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .success-message.show {
+            display: flex;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .success-message::before {
+            content: "✅";
+            font-size: 1.5em;
+        }
+        
+        footer {
+            background: linear-gradient(135deg, #263238 0%, #37474f 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .footer-branding {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ffa726;
+        }
+        
+        .footer-branding::before {
+            content: "🎓";
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="branding">PascalTamin Coaching</div>
+            <h1>🎓 Simulateur d'Examen BTS SP3S</h1>
+            <p style="font-size: 1.1em; opacity: 0.95; margin: 10px 0;">U3 - Gestion | Session 2023 | ESAT de Briard</p>
+            <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
+                <div style="background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 10px;">⏱️ Durée : 3h30</div>
+                <div style="background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 10px;">💯 Total : 80 points</div>
+                <div style="background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 10px;">📝 12 questions</div>
+            </div>
+        </header>
+
+        <div class="mode-selector">
+            <div class="mode-buttons">
+                <button class="mode-btn active" onclick="setMode('practice')">📝 Mode Entraînement</button>
+                <button class="mode-btn" onclick="setMode('exam')">⏱️ Mode Examen (3h30)</button>
+                <button class="mode-btn" onclick="saveAll()">💾 Sauvegarder tout</button>
+                <button class="mode-btn" onclick="window.print()">📄 Exporter PDF</button>
+                <button class="mode-btn" onclick="resetAll()">🔄 Recommencer</button>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="stat-box">
+                <div class="stat-value" id="score-total">0</div>
+                <div class="stat-label">Points / 80</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="questions-done">0</div>
+                <div class="stat-label">Questions soumises / 12</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="progress-percent">0%</div>
+                <div class="stat-label">Progression</div>
+            </div>
+            <div class="stat-box timer" id="timer-box" style="display: none;">
+                <div class="stat-value" id="timer-display">3:30:00</div>
+                <div class="stat-label">Temps restant</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- INTRODUCTION -->
+            <div style="background: #fff3e0; border: 3px solid #ff9800; border-radius: 15px; padding: 30px; margin-bottom: 30px;">
+                <h2 style="color: #ff5722; margin-bottom: 20px;">🎯 Comment utiliser ce simulateur ?</h2>
+                
+                <div style="background: white; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                    <h3 style="color: #ff5722; margin-bottom: 10px;">✍️ Pour chaque question :</h3>
+                    <ol style="margin-left: 25px;">
+                        <li>Lis attentivement la consigne</li>
+                        <li>Rédige ta réponse dans la zone de texte</li>
+                        <li>Clique sur <strong>"Soumettre ma réponse"</strong></li>
+                        <li>Clique sur <strong>"Voir la correction"</strong></li>
+                        <li>Compare et auto-évalue-toi</li>
+                    </ol>
+                </div>
+
+                <div style="background: #4caf50; color: white; padding: 15px; border-radius: 10px; text-align: center; margin-top: 20px;">
+                    <strong>💾 Sauvegarde automatique !</strong> Tes réponses sont sauvegardées en continu. Tu peux fermer et revenir plus tard !
+                </div>
+            </div>
+
+            <!-- DOSSIER 1 -->
+            <div class="dossier">
+                <div class="dossier-header" onclick="toggleDossier(this)">
+                    <h2>💰 DOSSIER 1 : Gestion Financière</h2>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="background: white; color: #ff5722; padding: 10px 20px; border-radius: 25px; font-weight: bold;">35 points</span>
+                        <span style="font-size: 1.5em;">▼</span>
+                    </div>
+                </div>
+                <div class="dossier-content">
+                    <div class="aide">
+                        <div class="aide-title">Contexte du dossier</div>
+                        <p>L'ESAT a perdu un contrat en 2022 → perte de 12 358 €</p>
+                        <p><strong>Solution :</strong> Créer une activité de location de salle de réunion</p>
+                        <p><strong>Ton rôle :</strong> Analyser la situation et étudier la faisabilité du projet</p>
+                    </div>
+
+                    <!-- Question 1.1 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 1.1</span>
+                            <span class="question-points">5 points</span>
+                        </div>
+                        <h3 class="question-title">Calculer la profitabilité et les taux de charges (2021-2022)</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>À partir de l'<strong>Annexe 1</strong>, calculer pour 2021 et 2022 :</p>
+                            <ul style="margin-left: 25px;">
+                                <li>La profitabilité</li>
+                                <li>Le taux de charges matières premières</li>
+                                <li>Le taux de charges de personnel</li>
+                            </ul>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Ta réponse (présente tes calculs détaillés) :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-1-1"
+                                placeholder="Écris tes calculs ici...
+
+Exemple de présentation :
+
+1. PROFITABILITÉ
+2021 : (Résultat / CA) × 100 = ...
+2022 : ...
+
+2. TAUX CHARGES MATIÈRES
+2021 : ...
+2022 : ...
+
+3. TAUX CHARGES PERSONNEL
+2021 : ...
+2022 : ..."
+                                oninput="saveAnswer('1-1')"
+                                style="min-height: 250px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('1-1')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-1-1" onclick="showCorrection('1-1')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-1-1">
+                            Réponse soumise ! Tu peux maintenant voir la correction.
+                        </div>
+
+                        <div class="correction-panel" id="correction-1-1">
+                            <div class="correction-title">Correction détaillée - Question 1.1</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">Calculs complets</div>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">1. Profitabilité</h4>
+                                <div class="formule">Profitabilité = (Résultat / CA) × 100</div>
+                                <p><strong>2021 :</strong> (20 648 / 1 230 522) × 100 = <strong>1,68%</strong></p>
+                                <p><strong>2022 :</strong> (-12 358 / 1 111 802) × 100 = <strong>-1,11%</strong></p>
+
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">2. Taux charges matières</h4>
+                                <div class="formule">Taux = (Charges matières / CA) × 100</div>
+                                <p><strong>2021 :</strong> (429 492 / 1 230 522) × 100 = <strong>34,90%</strong></p>
+                                <p><strong>2022 :</strong> (411 320 / 1 111 802) × 100 = <strong>37,00%</strong></p>
+
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">3. Taux charges personnel</h4>
+                                <p><strong>2021 :</strong></p>
+                                <p>Total charges personnel = 352 000 + 120 800 = <strong>472 800 €</strong></p>
+                                <p>(472 800 / 1 230 522) × 100 = <strong>38,42%</strong></p>
+                                
+                                <p><strong>2022 :</strong></p>
+                                <p>Total charges personnel = 353 100 + 121 759 = <strong>474 859 €</strong></p>
+                                <p>(474 859 / 1 111 802) × 100 = <strong>42,71%</strong></p>
+
+                                <table>
+                                    <tr><th>Indicateur</th><th>2021</th><th>2022</th></tr>
+                                    <tr><td>Profitabilité</td><td>+1,68%</td><td>-1,11%</td></tr>
+                                    <tr><td>Taux charges matières</td><td>34,90%</td><td>37,00%</td></tr>
+                                    <tr><td>Taux charges personnel</td><td>38,42%</td><td>42,71%</td></tr>
+                                </table>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4 style="margin-bottom: 15px;">📊 Grille de notation (5 points)</h4>
+                                <div class="critere">
+                                    <span>✅ Profitabilité 2021 et 2022 correctes</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Taux charges matières correct</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Taux charges personnel correct</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Présentation et clarté</span>
+                                    <span class="critere-score">0,5 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-1-1">? / 5</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <p>Estime ta note en fonction de ta réponse :</p>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('1-1', 1, 5)">0-1 pt</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('1-1', 2.5, 5)">2-3 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('1-1', 5, 5)">4-5 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1.2 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 1.2</span>
+                            <span class="question-points">7 points</span>
+                        </div>
+                        <h3 class="question-title">Analyser l'évolution de la performance entre 2021 et 2022</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>À partir de tes résultats précédents, <strong>analyser</strong> l'évolution de la performance de l'ESAT.</p>
+                            <p>Ton analyse doit être <strong>structurée et argumentée</strong> avec des chiffres.</p>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Ta réponse (rédaction structurée) :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-1-2"
+                                placeholder="Rédige ton analyse ici...
+
+Structure conseillée :
+1. Introduction : situation générale
+2. Évolution du CA
+3. Évolution du résultat  
+4. Analyse des charges
+5. Conclusion sur les causes"
+                                oninput="saveAnswer('1-2')"
+                                style="min-height: 300px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('1-2')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-1-2" onclick="showCorrection('1-2')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-1-2">
+                            Réponse soumise !
+                        </div>
+
+                        <div class="correction-panel" id="correction-1-2">
+                            <div class="correction-title">Correction détaillée - Question 1.2</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">Analyse attendue</div>
+                                
+                                <p><strong>La performance de l'ESAT s'est fortement dégradée entre 2021 et 2022.</strong></p>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">1. Baisse du chiffre d'affaires</h4>
+                                <p>Le CA diminue de 118 720 € (-9,65%), passant de 1 230 522 € à 1 111 802 €. Cette baisse s'explique par la perte du contrat de blanchisserie mentionné dans le contexte.</p>
+
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">2. Passage d'un bénéfice à une perte</h4>
+                                <p>L'ESAT réalisait un bénéfice de 20 648 € en 2021 (profitabilité de +1,68%). En 2022, l'établissement enregistre une perte de 12 358 € (profitabilité de -1,11%). La dégradation est de 33 006 €.</p>
+
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">3. Augmentation du poids des charges</h4>
+                                <p><u>Charges de matières :</u> Leur taux passe de 34,90% à 37,00% (+2,10 points). En valeur, elles diminuent légèrement, mais leur poids relatif augmente mécaniquement avec la baisse du CA.</p>
+                                
+                                <p><u>Charges de personnel :</u> C'est la hausse la plus préoccupante. Le taux passe de 38,42% à 42,71% (+4,29 points). Les charges restent pratiquement stables en valeur absolue alors que le CA baisse, créant un effet de ciseaux défavorable.</p>
+
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">4. Conclusion</h4>
+                                <p>La situation est critique. Les charges fixes (notamment le personnel) ne peuvent être réduites facilement car l'ESAT a une mission sociale d'insertion. La perte du contrat a fait baisser les revenus sans possibilité de réduire proportionnellement les charges. Le projet de nouvelle activité (location de salle) est donc nécessaire pour augmenter le CA et retrouver l'équilibre financier.</p>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4 style="margin-bottom: 15px;">📊 Grille de notation (7 points)</h4>
+                                <div class="critere">
+                                    <span>✅ Évolution du CA chiffrée et expliquée</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Analyse bénéfice → perte</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Analyse des charges détaillée</span>
+                                    <span class="critere-score">2 pts</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Explication effet de ciseaux</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Conclusion cohérente</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-1-2">? / 7</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('1-2', 2, 7)">0-2 pts</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('1-2', 4.5, 7)">3-5 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('1-2', 7, 7)">6-7 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1.3 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 1.3</span>
+                            <span class="question-points">8 points</span>
+                        </div>
+                        <h3 class="question-title">Compte de résultat différentiel 2024 (Annexe A)</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>Compléter le compte de résultat différentiel prévi sionnel 2024 (Annexe A).</p>
+                            <p>Utilise les Annexes 2 et 3 pour les données.</p>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Tes calculs détaillés :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-1-3"
+                                placeholder="Présente tous tes calculs :
+
+1. CA global = 
+2. Charges variables =
+3. Marge/CV =
+4. Charges fixes :
+   - Personnel =
+   - Amortissements =
+   - Intérêts =
+   - Assurances =
+   Total CF =
+5. Résultat =
+
+N'oublie pas les % !"
+                                oninput="saveAnswer('1-3')"
+                                style="min-height: 280px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('1-3')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-1-3" onclick="showCorrection('1-3')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-1-3">
+                            Réponse soumise !
+                        </div>
+
+                        <div class="correction-panel" id="correction-1-3">
+                            <div class="correction-title">Correction détaillée - Question 1.3</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">Calculs complets</div>
+                                
+                                <p><strong>1. CA global :</strong> 500 € × 300 journées = <strong>150 000 €</strong> (100%)</p>
+                                
+                                <p><strong>2. Charges variables :</strong> 100 € × 300 = <strong>30 000 €</strong> (20%)</p>
+                                
+                                <p><strong>3. Marge/CV :</strong> 150 000 - 30 000 = <strong>120 000 €</strong> (80%)</p>
+                                
+                                <p><strong>4. Charges fixes :</strong></p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Personnel : <strong>94 000 €</strong></li>
+                                    <li>Amortissements : 36 000 / 10 ans = <strong>3 600 €</strong></li>
+                                    <li>Intérêts emprunt (Annexe 3) : <strong>540 €</strong></li>
+                                    <li>Assurances : <strong>2 400 €</strong></li>
+                                    <li><strong>Total CF = 100 540 €</strong> (67,03%)</li>
+                                </ul>
+                                
+                                <p><strong>5. Résultat :</strong> 120 000 - 100 540 = <strong>19 460 €</strong> (12,97%)</p>
+
+                                <table>
+                                    <tr><th>Éléments</th><th>Montants (€)</th><th>%</th></tr>
+                                    <tr style="background: #fff3e0;"><td><strong>CA global</strong></td><td>150 000</td><td>100,00</td></tr>
+                                    <tr><td>Charges variables</td><td>30 000</td><td>20,00</td></tr>
+                                    <tr style="background: #fff9c4;"><td><strong>MARGE/CV</strong></td><td>120 000</td><td>80,00</td></tr>
+                                    <tr><td>Charges fixes</td><td>100 540</td><td>67,03</td></tr>
+                                    <tr style="background: #c8e6c9;"><td><strong>RÉSULTAT</strong></td><td>19 460</td><td>12,97</td></tr>
+                                </table>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4>📊 Grille de notation (8 points)</h4>
+                                <div class="critere">
+                                    <span>✅ CA correct</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ CV correctes</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Marge/CV correcte</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ CF détaillées et correctes</span>
+                                    <span class="critere-score">3 pts</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Résultat correct</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ % calculés</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-1-3">? / 8</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('1-3', 3, 8)">0-3 pts</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('1-3', 5.5, 8)">4-6 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('1-3', 8, 8)">7-8 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!-- Question 1.4 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 1.4</span>
+                            <span class="question-points">5 points</span>
+                        </div>
+                        <h3 class="question-title">Calculer le seuil de rentabilité</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>Calculer le seuil de rentabilité :</p>
+                            <ul style="margin-left: 25px;">
+                                <li>En valeur (CA minimum)</li>
+                                <li>En quantité (nombre de journées)</li>
+                            </ul>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Tes calculs :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-1-4"
+                                placeholder="Calcule le SR :
+
+1. Taux de Marge/CV =
+
+2. SR en € =
+
+3. SR en journées ="
+                                oninput="saveAnswer('1-4')"
+                                style="min-height: 180px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('1-4')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-1-4" onclick="showCorrection('1-4')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-1-4">
+                            Réponse soumise !
+                        </div>
+
+                        <div class="correction-panel" id="correction-1-4">
+                            <div class="correction-title">Correction détaillée - Question 1.4</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">Calculs du seuil de rentabilité</div>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">1. Taux de Marge/CV</h4>
+                                <div class="formule">Taux M/CV = (Marge/CV / CA) × 100</div>
+                                <p>(120 000 / 150 000) × 100 = <strong>80%</strong></p>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">2. SR en valeur</h4>
+                                <div class="formule">SR = Charges fixes / Taux M/CV</div>
+                                <p>100 540 / 0,80 = <strong>125 675 €</strong></p>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">3. SR en quantité (journées)</h4>
+                                <div class="formule">SR journées = SR en € / Prix journée</div>
+                                <p>125 675 / 500 = <strong>251,35 journées</strong></p>
+                                <p>Arrondi : <strong>252 journées</strong></p>
+
+                                <div class="aide" style="margin-top: 20px;">
+                                    <div class="aide-title">Interprétation</div>
+                                    <p>L'ESAT doit réaliser au minimum <strong>252 jours de location</strong> pour atteindre l'équilibre (ni bénéfice ni perte).</p>
+                                    <p>Prévisions = 300 jours > 252 jours → Le projet est <strong>rentable</strong> ✅</p>
+                                </div>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4>📊 Grille de notation (5 points)</h4>
+                                <div class="critere">
+                                    <span>✅ Taux M/CV correct</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ SR en valeur correct</span>
+                                    <span class="critere-score">2 pts</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ SR en journées correct</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Présentation des calculs</span>
+                                    <span class="critere-score">0,5 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-1-4">? / 5</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('1-4', 1, 5)">0-1 pt</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('1-4', 3, 5)">2-3 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('1-4', 5, 5)">4-5 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1.5 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 1.5</span>
+                            <span class="question-points">3 points</span>
+                        </div>
+                        <h3 class="question-title">Déterminer le point mort</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>À quelle date le seuil de rentabilité sera-t-il atteint ?</p>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Ton calcul du point mort :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-1-5"
+                                placeholder="Calcule le point mort :
+
+1. Point mort en jours = 
+
+2. Conversion en date ="
+                                oninput="saveAnswer('1-5')"
+                                style="min-height: 150px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('1-5')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-1-5" onclick="showCorrection('1-5')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-1-5">
+                            Réponse soumise !
+                        </div>
+
+                        <div class="correction-panel" id="correction-1-5">
+                            <div class="correction-title">Correction détaillée - Question 1.5</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">Calcul du point mort</div>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">1. Point mort en jours</h4>
+                                <div class="formule">PM = (SR / CA) × 365 jours</div>
+                                <p>(125 675 / 150 000) × 365 = <strong>306 jours</strong></p>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">2. Conversion en date</h4>
+                                <p>À partir du 1er janvier 2024 :</p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Janvier : 31 jours</li>
+                                    <li>Février : 29 jours (2024 = année bissextile)</li>
+                                    <li>Mars : 31 jours</li>
+                                    <li>Avril : 30 jours</li>
+                                    <li>Mai : 31 jours</li>
+                                    <li>Juin : 30 jours</li>
+                                    <li>Juillet : 31 jours</li>
+                                    <li>Août : 31 jours</li>
+                                    <li>Septembre : 30 jours</li>
+                                    <li>Octobre : 31 jours</li>
+                                    <li><strong>Total = 305 jours</strong></li>
+                                </ul>
+                                <p>306 - 305 = 1 jour en novembre</p>
+                                <p><strong>Point mort = 1er novembre 2024</strong></p>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4>📊 Grille de notation (3 points)</h4>
+                                <div class="critere">
+                                    <span>✅ Formule et calcul en jours</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Conversion en date correcte</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-1-5">? / 3</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('1-5', 0.5, 3)">0-1 pt</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('1-5', 2, 3)">1,5-2 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('1-5', 3, 3)">2,5-3 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1.6 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 1.6</span>
+                            <span class="question-points">7 points</span>
+                        </div>
+                        <h3 class="question-title">Conclure sur l'intérêt du projet</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>À partir de tes résultats précédents, <strong>conclure</strong> sur l'intérêt du projet de location de salle.</p>
+                            <p>Ta conclusion doit être argumentée (aspects financiers ET sociaux).</p>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Ta conclusion argumentée :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-1-6"
+                                placeholder="Rédige ta conclusion :
+
+1. Bilan financier (rentabilité, SR, résultat...)
+2. Intérêts sociaux (emplois, mission...)
+3. Points de vigilance
+4. Recommandation finale"
+                                oninput="saveAnswer('1-6')"
+                                style="min-height: 280px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('1-6')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-1-6" onclick="showCorrection('1-6')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-1-6">
+                            Réponse soumise !
+                        </div>
+
+                        <div class="correction-panel" id="correction-1-6">
+                            <div class="correction-title">Correction détaillée - Question 1.6</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">Conclusion structurée</div>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">1. Intérêt financier du projet</h4>
+                                <p>Le projet de location de salle présente un <strong>intérêt financier certain</strong> :</p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Résultat prévisionnel positif : <strong>+19 460 €</strong></li>
+                                    <li>Profitabilité attractive : <strong>12,97%</strong></li>
+                                    <li>Seuil de rentabilité atteignable : 252 journées vs 300 prévues</li>
+                                    <li>Marge de sécurité confortable : 48 journées</li>
+                                    <li>Ce bénéfice compensera la perte de 2022 (-12 358 €)</li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">2. Intérêt social et stratégique</h4>
+                                <p>Le projet répond parfaitement à la <strong>mission sociale</strong> de l'ESAT :</p>
+                                <ul style="margin-left: 25px;">
+                                    <li><strong>Création de 6 emplois</strong> pour des travailleurs handicapés</li>
+                                    <li>Diversification des activités → réduction du risque</li>
+                                    <li>Valorisation des compétences (accueil, service...)</li>
+                                    <li>Cohérence avec les valeurs d'insertion professionnelle</li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">3. Points de vigilance</h4>
+                                <p>Quelques <strong>risques</strong> à surveiller :</p>
+                                <ul style="margin-left: 25px;">
+                                    <li>L'hypothèse de 300 jours doit être validée par une étude de marché</li>
+                                    <li>Charges fixes élevées (67% du CA) → peu de flexibilité</li>
+                                    <li>Nécessité d'une stratégie commerciale efficace</li>
+                                    <li>Formation du personnel aux nouvelles compétences requises</li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">4. Recommandation finale</h4>
+                                <p><strong>Je recommande le lancement du projet</strong> pour les raisons suivantes :</p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Équilibre financier restauré</li>
+                                    <li>Impact social positif</li>
+                                    <li>Réponse adaptée à la situation de crise</li>
+                                </ul>
+                                <p>Toutefois, il convient de :</p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Mettre en place un plan commercial solide</li>
+                                    <li>Former correctement le personnel</li>
+                                    <li>Suivre mensuellement les indicateurs (CA, taux de remplissage)</li>
+                                </ul>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4>📊 Grille de notation (7 points)</h4>
+                                <div class="critere">
+                                    <span>✅ Bilan financier argumenté avec chiffres</span>
+                                    <span class="critere-score">2 pts</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Aspects sociaux développés</span>
+                                    <span class="critere-score">2 pts</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Points de vigilance identifiés</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Recommandation claire et cohérente</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Structure et rédaction</span>
+                                    <span class="critere-score">0,5 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-1-6">? / 7</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('1-6', 2, 7)">0-2 pts</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('1-6', 4.5, 7)">3-5 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('1-6', 7, 7)">6-7 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- DOSSIER 2 -->
+            <div class="dossier">
+                <div class="dossier-header" onclick="toggleDossier(this)">
+                    <h2>👥 DOSSIER 2 : Recrutement Interne</h2>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="background: white; color: #ff5722; padding: 10px 20px; border-radius: 25px; font-weight: bold;">25 points</span>
+                        <span style="font-size: 1.5em;">▼</span>
+                    </div>
+                </div>
+                <div class="dossier-content">
+                    <div class="aide">
+                        <div class="aide-title">Contexte du dossier</div>
+                        <p>Il faut recruter un <strong>moniteur d'atelier</strong> pour la nouvelle activité.</p>
+                        <p>C'est un <strong>recrutement INTERNE</strong> : parmi les 6 moniteurs déjà en poste.</p>
+                        <p><strong>Ton rôle :</strong> Organiser ce recrutement</p>
+                    </div>
+
+                    <!-- Question 2.1 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 2.1</span>
+                            <span class="question-points">10 points</span>
+                        </div>
+                        <h3 class="question-title">Concevoir l'annonce d'emploi interne</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>Rédiger l'annonce interne pour recruter le moniteur.</p>
+                            <p>Utiliser les Annexes 4 (missions du moniteur) et 5 (compétences requises).</p>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Rédige ton annonce complète :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-2-1"
+                                placeholder="Rédige l'annonce :
+
+TITRE
+
+CONTEXTE
+(Pourquoi ce recrutement)
+
+MISSIONS PRINCIPALES
+- ...
+
+COMPÉTENCES REQUISES
+- ...
+
+CONDITIONS
+- Type de contrat
+- Date de prise de poste
+- ...
+
+CANDIDATURE
+Comment postuler"
+                                oninput="saveAnswer('2-1')"
+                                style="min-height: 350px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('2-1')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-2-1" onclick="showCorrection('2-1')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-2-1">
+                            Réponse soumise !
+                        </div>
+
+                        <div class="correction-panel" id="correction-2-1">
+                            <div class="correction-title">Correction détaillée - Question 2.1</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">Exemple d'annonce complète</div>
+                                
+                                <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #ff5722;">
+                                    <h3 style="color: #ff5722; text-align: center; margin-bottom: 15px;">📢 OFFRE DE MOBILITÉ INTERNE</h3>
+                                    <h4 style="text-align: center; margin-bottom: 20px;">Moniteur d'atelier - Activité Location de Salle de Réunion</h4>
+                                    
+                                    <p><strong>CONTEXTE :</strong></p>
+                                    <p>Dans le cadre du développement de l'ESAT et pour diversifier nos activités, nous créons une nouvelle activité de location de salle de réunion. Cette activité permettra de créer 6 emplois pour nos travailleurs handicapés et de renforcer notre autonomie financière.</p>
+                                    
+                                    <p style="margin-top: 15px;"><strong>MISSIONS PRINCIPALES :</strong></p>
+                                    <ul style="margin-left: 25px;">
+                                        <li>Encadrer et accompagner 5 travailleurs handicapés</li>
+                                        <li>Développer l'activité commerciale (prospection, négociation)</li>
+                                        <li>Gérer les réservations et la planification</li>
+                                        <li>Assurer la gestion administrative et financière</li>
+                                        <li>Garantir la qualité du service client</li>
+                                        <li>Veiller à la sécurité et au bien-être des travailleurs</li>
+                                    </ul>
+                                    
+                                    <p style="margin-top: 15px;"><strong>COMPÉTENCES REQUISES :</strong></p>
+                                    <p><u>Communication :</u></p>
+                                    <ul style="margin-left: 25px;">
+                                        <li>Excellente capacité à représenter l'ESAT</li>
+                                        <li>Aisance relationnelle avec la clientèle</li>
+                                        <li>Capacité d'écoute et d'adaptation</li>
+                                    </ul>
+                                    <p><u>Compétences commerciales :</u></p>
+                                    <ul style="margin-left: 25px;">
+                                        <li>Techniques de prospection</li>
+                                        <li>Négociation commerciale</li>
+                                        <li>Sens du service client</li>
+                                    </ul>
+                                    <p><u>Compétences administratives :</u></p>
+                                    <ul style="margin-left: 25px;">
+                                        <li>Gestion administrative</li>
+                                        <li>Organisation et planification</li>
+                                        <li>Maîtrise des outils bureautiques</li>
+                                    </ul>
+                                    
+                                    <p style="margin-top: 15px;"><strong>CONDITIONS :</strong></p>
+                                    <ul style="margin-left: 25px;">
+                                        <li>Contrat : CDI temps complet</li>
+                                        <li>Prise de poste : 1er janvier 2024</li>
+                                        <li>Formation commerciale assurée par l'ESAT</li>
+                                        <li>Rémunération selon grille conventionnelle</li>
+                                    </ul>
+                                    
+                                    <p style="margin-top: 15px;"><strong>CANDIDATURE :</strong></p>
+                                    <p>Merci d'adresser votre lettre de motivation et CV à Madame Ponte avant le [date].</p>
+                                </div>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4>📊 Grille de notation (10 points)</h4>
+                                <div class="critere">
+                                    <span>✅ Titre et présentation</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Contexte expliqué</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Missions complètes (Annexe 4)</span>
+                                    <span class="critere-score">2,5 pts</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Compétences détaillées (Annexe 5)</span>
+                                    <span class="critere-score">3 pts</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Conditions précisées</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Modalités de candidature</span>
+                                    <span class="critere-score">0,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Qualité rédactionnelle</span>
+                                    <span class="critere-score">0,5 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-2-1">? / 10</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('2-1', 3, 10)">0-3 pts</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('2-1', 6.5, 10)">4-8 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('2-1', 10, 10)">9-10 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!-- Question 2.2 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 2.2</span>
+                            <span class="question-points">7 points</span>
+                        </div>
+                        <h3 class="question-title">Préciser les modes de diffusion de l'annonce</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>Proposer <strong>4 modes de diffusion</strong> pour l'annonce interne.</p>
+                            <p>Pour chacun, justifier son intérêt.</p>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Tes 4 modes de diffusion avec justifications :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-2-2"
+                                placeholder="Propose 4 modes et justifie :
+
+MODE 1 : 
+Intérêts : ...
+
+MODE 2 :
+Intérêts : ...
+
+MODE 3 :
+Intérêts : ...
+
+MODE 4 :
+Intérêts : ..."
+                                oninput="saveAnswer('2-2')"
+                                style="min-height: 280px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('2-2')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-2-2" onclick="showCorrection('2-2')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-2-2">
+                            Réponse soumise !
+                        </div>
+
+                        <div class="correction-panel" id="correction-2-2">
+                            <div class="correction-title">Correction détaillée - Question 2.2</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">4 modes de diffusion avec justifications</div>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">MODE 1 : Affichage sur panneaux d'information</h4>
+                                <p><strong>Intérêts :</strong></p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Visibilité maximale pour tous les salariés</li>
+                                    <li>Obligation légale en matière de mobilité interne</li>
+                                    <li>Support durable (affiché plusieurs semaines)</li>
+                                    <li>Traçabilité de la diffusion</li>
+                                    <li>Équité : tous les moniteurs peuvent le voir</li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">MODE 2 : Email individuel aux 6 moniteurs</h4>
+                                <p><strong>Intérêts :</strong></p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Ciblage précis des salariés concernés</li>
+                                    <li>Rapidité de diffusion</li>
+                                    <li>Information personnalisée et directe</li>
+                                    <li>Confirmation de réception possible</li>
+                                    <li>Possibilité d'y joindre des documents (fiches de poste...)</li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">MODE 3 : Réunion d'information collective</h4>
+                                <p><strong>Intérêts :</strong></p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Présentation orale détaillée du projet</li>
+                                    <li>Possibilité de poser des questions</li>
+                                    <li>Échanges et clarifications en direct</li>
+                                    <li>Valorisation du projet et des candidats potentiels</li>
+                                    <li>Transparence sur les objectifs et les enjeux</li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">MODE 4 : Distribution de document papier en main propre</h4>
+                                <p><strong>Intérêts :</strong></p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Support personnel que le salarié peut conserver</li>
+                                    <li>Accessibilité (pas besoin d'ordinateur)</li>
+                                    <li>Complément aux autres modes de diffusion</li>
+                                    <li>Preuve de remise (émargement possible)</li>
+                                    <li>Adaptabilité à tous les publics</li>
+                                </ul>
+
+                                <div class="aide" style="margin-top: 20px;">
+                                    <div class="aide-title">Note importante</div>
+                                    <p>Il est recommandé de <strong>combiner plusieurs modes</strong> pour garantir que tous les moniteurs soient effectivement informés. Cela assure l'équité et la transparence du processus de recrutement interne.</p>
+                                </div>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4>📊 Grille de notation (7 points)</h4>
+                                <div class="critere">
+                                    <span>✅ Mode 1 pertinent et justifié</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Mode 2 pertinent et justifié</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Mode 3 pertinent et justifié</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Mode 4 pertinent et justifié</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Diversité des modes proposés</span>
+                                    <span class="critere-score">0,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Qualité des justifications</span>
+                                    <span class="critere-score">0,5 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-2-2">? / 7</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('2-2', 2, 7)">0-2 pts</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('2-2', 4.5, 7)">3-5 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('2-2', 7, 7)">6-7 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 2.3 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 2.3</span>
+                            <span class="question-points">8 points</span>
+                        </div>
+                        <h3 class="question-title">Élaborer une grille d'entretien annuel d'évaluation</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>Concevoir une grille d'entretien annuel permettant d'évaluer les moniteurs ET d'identifier le plus apte pour la nouvelle activité.</p>
+                            <p>S'appuyer sur les Annexes 4 et 5.</p>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Présente ta grille d'évaluation (structure + critères) :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-2-3"
+                                placeholder="Décris ta grille :
+
+EN-TÊTE :
+- Informations à collecter
+
+PARTIE 1 : ÉVALUATION DES COMPÉTENCES ACTUELLES
+- Critères d'évaluation du poste de moniteur
+
+PARTIE 2 : COMPÉTENCES POUR LA NOUVELLE ACTIVITÉ  
+- Critères liés à la nouvelle activité
+
+PARTIE 3 : BILAN ET PERSPECTIVES
+- Questions de synthèse
+
+SYSTÈME DE NOTATION :
+- Échelle utilisée"
+                                oninput="saveAnswer('2-3')"
+                                style="min-height: 320px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('2-3')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-2-3" onclick="showCorrection('2-3')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-2-3">
+                            Réponse soumise !
+                        </div>
+
+                        <div class="correction-panel" id="correction-2-3">
+                            <div class="correction-title">Correction détaillée - Question 2.3</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">Structure de la grille d'évaluation</div>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">EN-TÊTE DE LA GRILLE</h4>
+                                <ul style="margin-left: 25px;">
+                                    <li>Nom et prénom du salarié</li>
+                                    <li>Poste actuel</li>
+                                    <li>Date d'entrée dans l'établissement</li>
+                                    <li>Date de l'entretien</li>
+                                    <li>Nom de l'évaluateur</li>
+                                    <li>Période évaluée</li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">PARTIE 1 : ÉVALUATION DES COMPÉTENCES DE MONITEUR</h4>
+                                <p>Basé sur l'Annexe 4, évaluer :</p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Gestion et organisation de l'atelier</li>
+                                    <li>Encadrement des travailleurs handicapés</li>
+                                    <li>Adaptation des postes de travail</li>
+                                    <li>Respect des règles de sécurité</li>
+                                    <li>Travail en équipe</li>
+                                    <li>Communication interne</li>
+                                    <li>Gestion administrative courante</li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">PARTIE 2 : COMPÉTENCES POUR LA NOUVELLE ACTIVITÉ</h4>
+                                <p>Basé sur l'Annexe 5, évaluer :</p>
+                                <p><u>Compétences de communication :</u></p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Capacité à représenter l'ESAT</li>
+                                    <li>Aisance relationnelle</li>
+                                    <li>Qualité d'écoute</li>
+                                </ul>
+                                <p><u>Compétences commerciales :</u></p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Compréhension des enjeux commerciaux</li>
+                                    <li>Capacité de prospection</li>
+                                    <li>Aptitude à la négociation</li>
+                                    <li>Sens du service client</li>
+                                </ul>
+                                <p><u>Compétences administratives :</u></p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Gestion administrative</li>
+                                    <li>Organisation et planification</li>
+                                    <li>Maîtrise des outils bureautiques</li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">PARTIE 3 : BILAN ET PERSPECTIVES</h4>
+                                <ul style="margin-left: 25px;">
+                                    <li>Points forts du salarié</li>
+                                    <li>Points d'amélioration</li>
+                                    <li>Objectifs pour l'année à venir</li>
+                                    <li>Besoins en formation</li>
+                                    <li><strong>Intérêt pour la nouvelle activité de location de salle</strong></li>
+                                    <li><strong>Motivation à candidater</strong></li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">SYSTÈME DE NOTATION</h4>
+                                <p>Échelle d'évaluation : <strong>1 à 5</strong></p>
+                                <ul style="margin-left: 25px;">
+                                    <li>1 = Non acquis / À développer</li>
+                                    <li>2 = En cours d'acquisition</li>
+                                    <li>3 = Acquis / Satisfaisant</li>
+                                    <li>4 = Bien maîtrisé</li>
+                                    <li>5 = Excellent / Expert</li>
+                                </ul>
+                                <p>+ Zone de commentaires pour chaque critère</p>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">SIGNATURES</h4>
+                                <ul style="margin-left: 25px;">
+                                    <li>Signature du salarié évalué</li>
+                                    <li>Signature de l'évaluateur</li>
+                                    <li>Date</li>
+                                </ul>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4>📊 Grille de notation (8 points)</h4>
+                                <div class="critere">
+                                    <span>✅ En-tête complet</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Partie 1 : compétences moniteur (Annexe 4)</span>
+                                    <span class="critere-score">2 pts</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Partie 2 : compétences nouvelle activité (Annexe 5)</span>
+                                    <span class="critere-score">3 pts</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Partie 3 : bilan et candidature</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Système de notation cohérent</span>
+                                    <span class="critere-score">0,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Structure claire et complète</span>
+                                    <span class="critere-score">0,5 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-2-3">? / 8</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('2-3', 3, 8)">0-3 pts</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('2-3', 5.5, 8)">4-6 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('2-3', 8, 8)">7-8 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- DOSSIER 3 -->
+            <div class="dossier">
+                <div class="dossier-header" onclick="toggleDossier(this)">
+                    <h2>📚 DOSSIER 3 : Formation du Personnel</h2>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="background: white; color: #ff5722; padding: 10px 20px; border-radius: 25px; font-weight: bold;">20 points</span>
+                        <span style="font-size: 1.5em;">▼</span>
+                    </div>
+                </div>
+                <div class="dossier-content">
+                    <div class="aide">
+                        <div class="aide-title">Contexte du dossier</div>
+                        <p><strong>M. Marty</strong> est choisi pour la nouvelle activité.</p>
+                        <p>Il manque de <strong>compétences commerciales</strong> → Formation nécessaire</p>
+                        <p>Il s'inquiète du <strong>coût</strong> qui pourrait rester à sa charge.</p>
+                        <p><strong>Ton rôle :</strong> Le rassurer et organiser la formation</p>
+                    </div>
+
+                    <!-- Question 3.1 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 3.1</span>
+                            <span class="question-points">7 points</span>
+                        </div>
+                        <h3 class="question-title">Rédiger un courriel d'information à M. Marty</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>Rédiger un courriel pour <strong>informer et rassurer</strong> M. Marty sur :</p>
+                            <ul style="margin-left: 25px;">
+                                <li>Le dispositif de formation</li>
+                                <li>Les modalités pratiques</li>
+                                <li>Sa rémunération pendant la formation</li>
+                                <li>La prise en charge des frais</li>
+                            </ul>
+                            <p>Utiliser les Annexes 6 et 7.</p>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Rédige ton courriel complet :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-3-1"
+                                placeholder="Rédige le courriel :
+
+De : ...
+À : M. Marty
+Objet : ...
+
+Formule de politesse
+
+Corps du message :
+- Contexte
+- Dispositif de formation  
+- Modalités pratiques
+- RASSURER sur rémunération
+- RASSURER sur prise en charge frais
+- Conclusion
+
+Formule de politesse
+Signature"
+                                oninput="saveAnswer('3-1')"
+                                style="min-height: 350px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('3-1')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-3-1" onclick="showCorrection('3-1')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-3-1">
+                            Réponse soumise !
+                        </div>
+
+                        <div class="correction-panel" id="correction-3-1">
+                            <div class="correction-title">Correction détaillée - Question 3.1</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">Exemple de courriel</div>
+                                
+                                <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #2196f3;">
+                                    <p><strong>De :</strong> Madame Ponte, Directrice ESAT de Briard</p>
+                                    <p><strong>À :</strong> M. Marty</p>
+                                    <p><strong>Objet :</strong> Formation commerciale - Modalités et prise en charge</p>
+                                    
+                                    <p style="margin-top: 20px;">Monsieur Marty,</p>
+                                    
+                                    <p>Suite à votre nomination au poste de moniteur pour notre nouvelle activité de location de salle, je souhaitais vous apporter toutes les informations concernant la formation commerciale que vous allez suivre.</p>
+                                    
+                                    <h4 style="color: #2196f3; margin: 15px 0 10px 0;">Le dispositif de formation</h4>
+                                    <p>Vous allez bénéficier d'une formation dans le cadre du <strong>Plan de développement des compétences</strong> de l'établissement. Ce dispositif présente de nombreux avantages pour vous.</p>
+                                    
+                                    <h4 style="color: #2196f3; margin: 15px 0 10px 0;">Modalités pratiques</h4>
+                                    <ul style="margin-left: 25px;">
+                                        <li><strong>Durée :</strong> 7 jours (7 heures par jour)</li>
+                                        <li><strong>Dates :</strong> À définir ensemble</li>
+                                        <li><strong>Lieu :</strong> Organisme de formation local</li>
+                                        <li><strong>Contenus :</strong> Techniques de prospection, négociation, relation client</li>
+                                    </ul>
+                                    
+                                    <h4 style="color: #4caf50; margin: 15px 0 10px 0;">Votre rémunération</h4>
+                                    <p><strong>Point essentiel :</strong> La formation se déroulera sur votre <strong>temps de travail</strong>. Votre salaire sera donc <strong>intégralement maintenu</strong> pendant toute la durée de la formation. Vous ne subirez aucune perte de rémunération.</p>
+                                    
+                                    <h4 style="color: #4caf50; margin: 15px 0 10px 0;">Prise en charge des frais</h4>
+                                    <p>Je tiens à vous rassurer : <strong>AUCUN FRAIS ne restera à votre charge.</strong></p>
+                                    <p>L'ESAT prend en charge :</p>
+                                    <ul style="margin-left: 25px;">
+                                        <li>Les frais pédagogiques : 1 540 €</li>
+                                        <li>Vos frais de déplacement et de repas : 182 €</li>
+                                        <li>Votre salaire et les charges sociales associées</li>
+                                    </ul>
+                                    <p><strong>Le coût total est entièrement supporté par l'établissement.</strong> Cette formation représente un investissement de notre part dans vos compétences.</p>
+                                    
+                                    <h4 style="color: #2196f3; margin: 15px 0 10px 0;">Organisation pendant votre absence</h4>
+                                    <p>Un remplacement sera assuré dans votre atelier actuel pour garantir la continuité du service.</p>
+                                    
+                                    <p style="margin-top: 20px;">Je reste à votre disposition pour toute question complémentaire.</p>
+                                    
+                                    <p style="margin-top: 15px;">Cordialement,</p>
+                                    <p><strong>Madame Ponte</strong><br>Directrice ESAT de Briard</p>
+                                </div>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4>📊 Grille de notation (7 points)</h4>
+                                <div class="critere">
+                                    <span>✅ Forme du courriel (objet, formules...)</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Dispositif expliqué (Plan de dév. compétences)</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Modalités pratiques (durée, lieu...)</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Rémunération maintenue (RASSURANT)</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Aucun frais à charge (RASSURANT)</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Ton adapté et professionnel</span>
+                                    <span class="critere-score">0,5 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-3-1">? / 7</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('3-1', 2, 7)">0-2 pts</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('3-1', 4.5, 7)">3-5 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('3-1', 7, 7)">6-7 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!-- Question 3.2 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 3.2</span>
+                            <span class="question-points">8 points</span>
+                        </div>
+                        <h3 class="question-title">Déterminer le coût total de la formation pour l'ESAT</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>Calculer le <strong>coût total</strong> de la formation de M. Marty pour l'ESAT.</p>
+                            <p>Prendre en compte TOUS les éléments de coût (Annexes 7 et 8).</p>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Tes calculs détaillés du coût total :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-3-2"
+                                placeholder="Calcule tous les coûts :
+
+1. Frais pédagogiques = 
+
+2. Frais déplacement/repas =
+
+3. Salaire de M. Marty (7 jours) =
+
+4. Charges sociales =
+
+COÛT TOTAL ="
+                                oninput="saveAnswer('3-2')"
+                                style="min-height: 220px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('3-2')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-3-2" onclick="showCorrection('3-2')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-3-2">
+                            Réponse soumise !
+                        </div>
+
+                        <div class="correction-panel" id="correction-3-2">
+                            <div class="correction-title">Correction détaillée - Question 3.2</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">Calcul du coût total</div>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">1. Frais pédagogiques</h4>
+                                <p>220 € par jour × 7 jours = <strong>1 540 €</strong></p>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">2. Frais de déplacement et repas</h4>
+                                <p>26 € par jour × 7 jours = <strong>182 €</strong></p>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">3. Salaire de M. Marty pendant la formation</h4>
+                                <p>D'après l'Annexe 8, M. Marty est à l'échelon 8 :</p>
+                                <p>Salaire brut mensuel = <strong>1 843 €</strong></p>
+                                <p>Salaire pour 7 jours :</p>
+                                <p>(1 843 / 30) × 7 = 61,43 × 7 = <strong>430,03 €</strong></p>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">4. Charges sociales patronales</h4>
+                                <p>D'après l'Annexe 7, taux de charges = <strong>42%</strong></p>
+                                <p>430,03 × 0,42 = <strong>180,61 €</strong></p>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">COÛT TOTAL</h4>
+                                <table>
+                                    <tr><th>Élément</th><th>Montant</th></tr>
+                                    <tr><td>Frais pédagogiques</td><td>1 540,00 €</td></tr>
+                                    <tr><td>Frais déplacement/repas</td><td>182,00 €</td></tr>
+                                    <tr><td>Salaire brut (7 jours)</td><td>430,03 €</td></tr>
+                                    <tr><td>Charges sociales (42%)</td><td>180,61 €</td></tr>
+                                    <tr style="background: #fff9c4; font-weight: bold;">
+                                        <td>TOTAL</td>
+                                        <td>2 332,64 €</td>
+                                    </tr>
+                                </table>
+
+                                <div class="aide" style="margin-top: 20px;">
+                                    <div class="aide-title">Points importants</div>
+                                    <ul style="margin-left: 25px;">
+                                        <li>Ne pas oublier les charges sociales !</li>
+                                        <li>Calculer le salaire sur 7 jours (pas 1 mois)</li>
+                                        <li>Prendre en compte TOUS les éléments de coût</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4>📊 Grille de notation (8 points)</h4>
+                                <div class="critere">
+                                    <span>✅ Frais pédagogiques</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Frais déplacement/repas</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Salaire 7 jours correct</span>
+                                    <span class="critere-score">3 pts</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Charges sociales calculées</span>
+                                    <span class="critere-score">2 pts</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Total correct et présenté</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-3-2">? / 8</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('3-2', 3, 8)">0-3 pts</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('3-2', 5.5, 8)">4-6 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('3-2', 8, 8)">7-8 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 3.3 -->
+                    <div class="question-interactive">
+                        <div class="question-header">
+                            <span class="question-number">Question 3.3</span>
+                            <span class="question-points">5 points</span>
+                        </div>
+                        <h3 class="question-title">Justifier le recours au CDD pour Mme Bugel</h3>
+                        
+                        <div class="consigne">
+                            <div class="consigne-title">Consigne</div>
+                            <p>Madame Ponte souhaite recruter <strong>Mme Bugel en CDD</strong> pour remplacer M. Marty pendant sa formation.</p>
+                            <p><strong>Justifier</strong> ce recours au CDD (cadre légal + pertinence).</p>
+                        </div>
+
+                        <div class="answer-zone">
+                            <label class="answer-label">✍️ Ta justification structurée :</label>
+                            <textarea 
+                                class="answer-input" 
+                                id="answer-3-3"
+                                placeholder="Justifie le CDD :
+
+1. Cadre légal : quel article du Code du travail autorise le CDD ?
+
+2. Cas de recours : dans quelle situation sommes-nous ?
+
+3. Justification factuelle : pourquoi le CDD est adapté ?
+
+4. Profil de Mme Bugel : pourquoi elle ?
+
+5. Conclusion"
+                                oninput="saveAnswer('3-3')"
+                                style="min-height: 280px;"
+                            ></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-submit" onclick="submitAnswer('3-3')">
+                                <span>✅</span> Soumettre ma réponse
+                            </button>
+                            <button class="btn btn-correction" id="btn-correction-3-3" onclick="showCorrection('3-3')" disabled>
+                                <span>🔓</span> Voir la correction
+                            </button>
+                        </div>
+
+                        <div class="success-message" id="success-3-3">
+                            Réponse soumise !
+                        </div>
+
+                        <div class="correction-panel" id="correction-3-3">
+                            <div class="correction-title">Correction détaillée - Question 3.3</div>
+                            
+                            <div class="exemple-solution">
+                                <div class="exemple-title">Justification complète</div>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">1. Cadre légal</h4>
+                                <p>Le <strong>Code du travail</strong>, dans son <strong>article L1242-2</strong>, autorise le recours au CDD dans des cas limitativement énumérés. Parmi ces cas figure le <strong>remplacement d'un salarié absent</strong>.</p>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">2. Cas de recours : remplacement d'un salarié absent</h4>
+                                <p>Nous sommes exactement dans ce cas de figure :</p>
+                                <ul style="margin-left: 25px;">
+                                    <li>M. Marty, moniteur en CDI, sera absent</li>
+                                    <li>Motif de l'absence : <strong>formation professionnelle</strong> (7 jours)</li>
+                                    <li>Date de retour connue et précise</li>
+                                    <li>Absence temporaire et justifiée</li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">3. Pourquoi le CDD est adapté</h4>
+                                <p>Le CDD est le contrat approprié car :</p>
+                                <ul style="margin-left: 25px;">
+                                    <li><strong>Durée précise :</strong> 7 jours, durée de la formation</li>
+                                    <li><strong>Besoin temporaire :</strong> Au retour de M. Marty, le poste est à nouveau pourvu</li>
+                                    <li><strong>Pas de besoin pérenne :</strong> Il n'y a pas de création de poste</li>
+                                    <li><strong>Continuité de service :</strong> L'atelier doit continuer à fonctionner pendant l'absence</li>
+                                </ul>
+                                <p>Un CDI ne serait pas pertinent car il faudrait ensuite licencier la personne au retour de M. Marty, ce qui serait abusif et illégal.</p>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">4. Le choix de Mme Bugel</h4>
+                                <p>Le profil de Mme Bugel présente plusieurs avantages :</p>
+                                <ul style="margin-left: 25px;">
+                                    <li>Elle <strong>connaît déjà l'établissement</strong></li>
+                                    <li>Elle a <strong>effectué plusieurs remplacements</strong> auparavant</li>
+                                    <li>Elle a <strong>donné entière satisfaction</strong></li>
+                                    <li>Elle est <strong>immédiatement opérationnelle</strong></li>
+                                    <li>Pas besoin de formation ou d'adaptation</li>
+                                </ul>
+                                
+                                <h4 style="color: #6a1b9a; margin: 15px 0;">5. Conclusion</h4>
+                                <p>Le recours au CDD pour Mme Bugel est donc :</p>
+                                <ul style="margin-left: 25px;">
+                                    <li>✅ <strong>Légal</strong> : conforme à l'article L1242-2</li>
+                                    <li>✅ <strong>Justifié</strong> : remplacement d'absence temporaire</li>
+                                    <li>✅ <strong>Adapté</strong> : durée précise et connue</li>
+                                    <li>✅ <strong>Pertinent</strong> : profil adéquat de la candidate</li>
+                                </ul>
+                            </div>
+
+                            <div class="notation-grid">
+                                <h4>📊 Grille de notation (5 points)</h4>
+                                <div class="critere">
+                                    <span>✅ Cadre légal cité (Code du travail)</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Cas de recours identifié (remplacement)</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Justification de l'adéquation du CDD</span>
+                                    <span class="critere-score">1,5 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Profil de Mme Bugel valorisé</span>
+                                    <span class="critere-score">1 pt</span>
+                                </div>
+                                <div class="critere">
+                                    <span>✅ Argumentation structurée</span>
+                                    <span class="critere-score">0,5 pt</span>
+                                </div>
+                                <div class="score-total">
+                                    Ta note : <span id="score-3-3">? / 5</span> points
+                                </div>
+                            </div>
+
+                            <div class="aide">
+                                <div class="aide-title">Auto-évaluation</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <button class="btn" style="background: #f44336; color: white;" onclick="setScore('3-3', 1.5, 5)">0-1,5 pt</button>
+                                    <button class="btn" style="background: #ff9800; color: white;" onclick="setScore('3-3', 3, 5)">2-3,5 pts</button>
+                                    <button class="btn" style="background: #4caf50; color: white;" onclick="setScore('3-3', 5, 5)">4-5 pts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CONCLUSION GÉNÉRALE -->
+            <div style="background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin: 40px 0;">
+                <h2 style="font-size: 2em; margin-bottom: 15px;">🎉 Félicitations !</h2>
+                <h3 style="font-size: 1.5em; margin-bottom: 20px;">Tu as terminé le simulateur !</h3>
+                <p style="font-size: 1.2em; line-height: 1.8;">
+                    Tu as travaillé sur les <strong>12 questions</strong> du devoir.<br>
+                    Regarde ton score dans le dashboard ci-dessus.<br>
+                    Continue à t'entraîner pour progresser ! 💪
+                </p>
+            </div>
+
+            <!-- Conseils finaux -->
+            <div style="background: #fff3e0; border: 3px solid #ff9800; border-radius: 15px; padding: 30px; margin: 30px 0;">
+                <h2 style="color: #ff5722; margin-bottom: 20px;">📚 Conseils pour l'examen</h2>
+                
+                <div style="background: white; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                    <h3 style="color: #ff5722; margin-bottom: 10px;">⏰ Gestion du temps</h3>
+                    <ul style="margin-left: 25px;">
+                        <li>3h30 pour 80 points = environ <strong>2,6 min par point</strong></li>
+                        <li>Garde 15 minutes à la fin pour te relire</li>
+                        <li>Si tu bloques, passe à la question suivante</li>
+                    </ul>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                    <h3 style="color: #ff5722; margin-bottom: 10px;">✍️ Présentation</h3>
+                    <ul style="margin-left: 25px;">
+                        <li>Soigne ton écriture</li>
+                        <li>Présente clairement tes calculs</li>
+                        <li>Structure tes réponses rédigées</li>
+                        <li>N'oublie pas l'<strong>Annexe A</strong> à rendre !</li>
+                    </ul>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                    <h3 style="color: #ff5722; margin-bottom: 10px;">🎯 Stratégie</h3>
+                    <ul style="margin-left: 25px;">
+                        <li>Lis TOUTES les annexes avant de commencer</li>
+                        <li>Commence par tes questions préférées</li>
+                        <li>Cite les chiffres des annexes dans tes réponses</li>
+                        <li>Même si tu doutes, présente ta démarche</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            <div class="footer-branding">PascalTamin Coaching</div>
+            <p style="font-size: 1.2em; margin: 10px 0; font-weight: bold;">Simulateur d'Examen BTS SP3S - U3 Gestion</p>
+            <p style="font-size: 1em; opacity: 0.9; margin: 5px 0;">Session 2023 - ESAT de Briard</p>
+            <p style="margin-top: 20px; opacity: 0.8;">Outil pédagogique interactif créé pour accompagner les étudiants vers la réussite</p>
+            <!-- PROTECTION DISCRÈTE -->
+<p style="font-size: 0.9em; margin-top: 20px; border-top: 2px solid rgba(255,255,255,0.3); padding-top: 15px;">
+    ⚠️ Cet outil est la propriété de PascalTamin Coaching<br>
+    Usage personnel uniquement - Merci de ne pas le partager<br>
+    📧 Contact : pascaltamin.coaching@exemple.fr
+</p>
+            <p style="font-size: 0.85em; margin-top: 10px; opacity: 0.7;">© 2024 PascalTamin Coaching - Tous droits réservés</p>
+        </footer>
+    </div>
+<script>
+        // ============================================
+        // SIMULATEUR BTS SP3S - PASCALTAMIN COACHING
+        // ============================================
+
+        // Variables globales
+        let currentMode = 'practice';
+        let timerInterval = null;
+        let timeRemaining = 3 * 60 * 60 + 30 * 60; // 3h30 en secondes
+        let scores = {};
+        let answers = {};
+        let maxScores = {
+            '1-1': 5, '1-2': 7, '1-3': 8, '1-4': 5, '1-5': 3, '1-6': 7,
+            '2-1': 10, '2-2': 7, '2-3': 8,
+            '3-1': 7, '3-2': 8, '3-3': 5
+        };
+
+        // Questions par dossier (pour le dashboard)
+        const questionsByDossier = {
+            '1': ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6'],
+            '2': ['2-1', '2-2', '2-3'],
+            '3': ['3-1', '3-2', '3-3']
+        };
+
+        // ============================================
+        // INITIALISATION
+        // ============================================
+
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('🎓 Simulateur BTS SP3S chargé - PascalTamin Coaching');
+            loadAllData();
+            updateDashboard();
+        });
+
+        // ============================================
+        // GESTION DES RÉPONSES
+        // ============================================
+
+        // Sauvegarder une réponse
+        function saveAnswer(questionId) {
+            const textarea = document.getElementById('answer-' + questionId);
+            if (!textarea) return;
+            
+            const answer = textarea.value;
+            
+            // Sauvegarder dans localStorage
+            localStorage.setItem('answer-' + questionId, answer);
+            answers[questionId] = answer;
+            
+            // Ajouter classe visuelle
+            if (answer.trim().length > 10) {
+                textarea.classList.add('has-content');
+            } else {
+                textarea.classList.remove('has-content');
+            }
+        }
+
+        // Soumettre une réponse
+        function submitAnswer(questionId) {
+            const textarea = document.getElementById('answer-' + questionId);
+            if (!textarea) return;
+            
+            const answer = textarea.value;
+            
+            if (answer.trim().length < 20) {
+                alert('⚠️ Ta réponse semble un peu courte. Développe davantage !');
+                return;
+            }
+            
+            // Sauvegarder
+            saveAnswer(questionId);
+            
+            // Marquer comme soumise
+            localStorage.setItem('submitted-' + questionId, 'true');
+            
+            // Débloquer le bouton de correction
+            const btnCorrection = document.getElementById('btn-correction-' + questionId);
+            if (btnCorrection) {
+                btnCorrection.disabled = false;
+                btnCorrection.style.opacity = '1';
+            }
+            
+            // Afficher le message de succès
+            const successMsg = document.getElementById('success-' + questionId);
+            if (successMsg) {
+                successMsg.classList.add('show');
+                setTimeout(() => {
+                    successMsg.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Mettre à jour le dashboard
+            updateDashboard();
+        }
+
+        // Afficher la correction
+        function showCorrection(questionId) {
+            const panel = document.getElementById('correction-' + questionId);
+            if (!panel) return;
+            
+            panel.classList.add('show');
+            
+            // Scroll vers la correction
+            setTimeout(() => {
+                panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        // ============================================
+        // GESTION DES SCORES
+        // ============================================
+
+        // Définir un score
+        function setScore(questionId, score, maxScore) {
+            scores[questionId] = score;
+            localStorage.setItem('score-' + questionId, score);
+            
+            // Mettre à jour l'affichage du score
+            const scoreElement = document.getElementById('score-' + questionId);
+            if (scoreElement) {
+                scoreElement.textContent = score + ' / ' + maxScore;
+                
+                // Animation
+                scoreElement.style.animation = 'none';
+                setTimeout(() => {
+                    scoreElement.style.animation = 'pulse 0.5s';
+                }, 10);
+            }
+            
+            // Mettre à jour le dashboard
+            updateDashboard();
+        }
+
+        // ============================================
+        // DASHBOARD
+        // ============================================
+
+        // Mettre à jour le dashboard
+        function updateDashboard() {
+            // Compter les questions soumises
+            let questionsDone = 0;
+            const totalQuestions = 12;
+            
+            for (let dossier in questionsByDossier) {
+                for (let qId of questionsByDossier[dossier]) {
+                    if (localStorage.getItem('submitted-' + qId)) {
+                        questionsDone++;
+                    }
+                }
+            }
+            
+            // Calculer le score total
+            let totalScore = 0;
+            for (let key in scores) {
+                totalScore += parseFloat(scores[key]);
+            }
+            totalScore = Math.round(totalScore * 10) / 10; // Arrondi à 1 décimale
+            
+            // Calculer le pourcentage de progression
+            const progressPercent = Math.round((questionsDone / totalQuestions) * 100);
+            
+            // Mettre à jour l'affichage
+            const scoreElement = document.getElementById('score-total');
+            const questionsElement = document.getElementById('questions-done');
+            const progressElement = document.getElementById('progress-percent');
+            
+            if (scoreElement) scoreElement.textContent = totalScore;
+            if (questionsElement) questionsElement.textContent = questionsDone;
+            if (progressElement) progressElement.textContent = progressPercent + '%';
+        }
+
+        // ============================================
+        // CHARGEMENT DES DONNÉES
+        // ============================================
+
+        // Charger toutes les données sauvegardées
+        function loadAllData() {
+            // Charger les réponses et scores pour toutes les questions
+            for (let dossier in questionsByDossier) {
+                for (let questionId of questionsByDossier[dossier]) {
+                    // Charger la réponse
+                    const savedAnswer = localStorage.getItem('answer-' + questionId);
+                    const textarea = document.getElementById('answer-' + questionId);
+                    
+                    if (savedAnswer && textarea) {
+                        textarea.value = savedAnswer;
+                        answers[questionId] = savedAnswer;
+                        
+                        // Ajouter la classe visuelle
+                        if (savedAnswer.trim().length > 10) {
+                            textarea.classList.add('has-content');
+                        }
+                    }
+                    
+                    // Vérifier si soumise
+                    if (localStorage.getItem('submitted-' + questionId)) {
+                        const btnCorrection = document.getElementById('btn-correction-' + questionId);
+                        if (btnCorrection) {
+                            btnCorrection.disabled = false;
+                            btnCorrection.style.opacity = '1';
+                        }
+                    }
+                    
+                    // Charger le score
+                    const savedScore = localStorage.getItem('score-' + questionId);
+                    if (savedScore) {
+                        scores[questionId] = parseFloat(savedScore);
+                        const scoreElement = document.getElementById('score-' + questionId);
+                        if (scoreElement) {
+                            scoreElement.textContent = savedScore + ' / ' + maxScores[questionId];
+                        }
+                    }
+                }
+            }
+        }
+
+        // ============================================
+        // ACTIONS GLOBALES
+        // ============================================
+
+        // Sauvegarder toutes les réponses
+        function saveAll() {
+            for (let dossier in questionsByDossier) {
+                for (let questionId of questionsByDossier[dossier]) {
+                    saveAnswer(questionId);
+                }
+            }
+            
+            alert('💾 Toutes tes réponses ont été sauvegardées !');
+        }
+
+        // Tout recommencer
+        function resetAll() {
+            if (!confirm('⚠️ Es-tu sûr(e) de vouloir tout effacer et recommencer à zéro ?\n\nCette action est irréversible !')) {
+                return;
+            }
+            
+            // Effacer le localStorage
+            localStorage.clear();
+            
+            // Recharger la page
+            location.reload();
+        }
+
+        // ============================================
+        // MODES
+        // ============================================
+
+        // Changer de mode
+        function setMode(mode) {
+            currentMode = mode;
+            
+            // Mettre à jour les boutons
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (mode === 'exam') {
+                // Démarrer le chronomètre
+                document.getElementById('timer-box').style.display = 'block';
+                startTimer();
+                alert('⏱️ Mode Examen activé !\n\nLe chronomètre de 3h30 est lancé.\nBon courage ! 💪');
+            } else {
+                // Arrêter le chronomètre
+                document.getElementById('timer-box').style.display = 'none';
+                stopTimer();
+            }
+        }
+
+        // ============================================
+        // CHRONOMÈTRE
+        // ============================================
+
+        // Démarrer le chronomètre
+        function startTimer() {
+            if (timerInterval) return; // Déjà en cours
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                
+                if (timeRemaining <= 0) {
+                    stopTimer();
+                    alert('⏰ Temps écoulé !\n\nL\'examen est terminé.\nConsulte ton score dans le dashboard.');
+                    return;
+                }
+                
+                // Mettre à jour l'affichage
+                const hours = Math.floor(timeRemaining / 3600);
+                const minutes = Math.floor((timeRemaining % 3600) / 60);
+                const seconds = timeRemaining % 60;
+                
+                const display = hours + ':' + 
+                    (minutes < 10 ? '0' : '') + minutes + ':' + 
+                    (seconds < 10 ? '0' : '') + seconds;
+                
+                const timerElement = document.getElementById('timer-display');
+                if (timerElement) {
+                    timerElement.textContent = display;
+                }
+                
+                // Changer la couleur si moins de 30 min
+                const timerBox = document.getElementById('timer-box');
+                if (timeRemaining < 30 * 60 && timerBox) {
+                    timerBox.style.background = '#f44336';
+                }
+            }, 1000);
+        }
+
+        // Arrêter le chronomètre
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        // ============================================
+        // DOSSIERS
+        // ============================================
+
+        // Toggle dossier
+        function toggleDossier(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('span:last-child');
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                if (icon) icon.textContent = '▼';
+            } else {
+                content.classList.add('active');
+                if (icon) icon.textContent = '▲';
+            }
+        }
+
+        // ============================================
+        // ANIMATIONS CSS
+        // ============================================
+
+        // Ajouter les animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+            }
+            
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            @media print {
+                .dashboard, .action-buttons, .mode-selector, .branding, header, footer {
+                    display: none !important;
+                }
+                
+                .correction-panel {
+                    page-break-inside: avoid;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // ============================================
+        // UTILITAIRES
+        // ============================================
+
+        // Log pour debug
+        console.log('✅ Système de sauvegarde initialisé');
+        console.log('📊 Nombre de questions : 12');
+        console.log('💯 Total des points : 80');
+        console.log('🎓 PascalTamin Coaching - Simulateur BTS SP3S');
+    </script>
+</body>
+</html>
